@@ -9,6 +9,9 @@ import SwiftUI
 struct MainView: View {
     @State private var selectedScreenIndex = UserDefaults.standard.integer(forKey: "selectedScreen")
     @State private var settingsWindow: NSWindow?
+    @State private var countdownString: String = ""
+    
+    @StateObject private var countdownTimer = CountdownTimer()
     
     let screens = NSScreen.screens
     
@@ -22,17 +25,43 @@ struct MainView: View {
             }
             .padding()
             
+            TextField("CountDown", text: $countdownString)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+            
+            HStack {
+                Button("Avvia Timer") {
+                    let val: Int = Int(countdownString) ?? 0
+                    countdownTimer.setTimer(duration: val)
+                }
+                .padding()
+                
+                Button("Pausa Timer") {
+                    countdownTimer.stopCountdown()
+                }
+                .padding()
+                
+                Button("Reset Timer") {
+                    countdownTimer.setTimer(duration: 0)
+                    countdownTimer.stopCountdown()
+                }
+                .padding()
+            }
+            
+            CountdownView(countdownTimer: countdownTimer)
+            
             Button("Apri Schermo Intero") {
                 if let selectedScreen = getSelectedScreen() {
                     openFullScreenWindow(on: selectedScreen)
                 }
             }
+            .padding()
         }
         .padding()
         .onAppear {
             selectedScreenIndex = UserDefaults.standard.integer(forKey: "selectedScreen")
             NotificationCenter.default.addObserver(forName: .didChangeSelectedScreen, object: nil, queue: .main) { _ in
-                selectedScreenIndex = UserDefaults.standard.integer(forKey: "selectedScreen")
+                selectedScreenIndex = UserDefaults.standard.integer(forKey: "didChangeSelectedScreen")
             }
         }
         .onDisappear {
@@ -75,14 +104,17 @@ struct MainView: View {
             defer: false
         )
         fullScreenWindow.isReleasedWhenClosed = false
-        fullScreenWindow.contentView = NSHostingView(rootView: FullScreenView())
+        fullScreenWindow.contentView = NSHostingView(rootView: FullScreenView(countdownView: CountdownView(countdownTimer: countdownTimer)))
         fullScreenWindow.level = .mainMenu + 1
         fullScreenWindow.makeKeyAndOrderFront(nil)
         fullScreenWindow.toggleFullScreen(nil)
     }
-    
 }
 
 extension NSNotification.Name {
     static let didChangeSelectedScreen = NSNotification.Name("didChangeSelectedScreen")
+}
+
+#Preview {
+    MainView()
 }

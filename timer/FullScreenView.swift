@@ -8,10 +8,15 @@
 import SwiftUI
 
 struct FullScreenView: View {
+    var countdownView: CountdownView
+    
     var body: some View {
-        CountdownView(duration: 60) // durata del countdown
+        countdownView
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.black.edgesIgnoringSafeArea(.all))
+            .onAppear {
+                // Azioni da eseguire quando la vista appare
+            }
     }
+    
 }
-
