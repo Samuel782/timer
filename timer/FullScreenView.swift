@@ -14,9 +14,6 @@ struct FullScreenView: View {
         countdownView
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.black.edgesIgnoringSafeArea(.all))
-            .onAppear {
-                // Azioni da eseguire quando la vista appare
-            }
     }
     
 }
