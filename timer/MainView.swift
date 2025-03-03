@@ -7,13 +7,10 @@ struct MainView: View {
     
     @StateObject private var countdownTimer = CountdownTimer()
     
-    
     let screens = NSScreen.screens
     
-    @State private var cueList: [CueModel] = [
-        CueModel(duration: 10, name: "Parte 1"),
-        CueModel(duration: 10, name: "Parte 2")
-    ]
+    @StateObject private var cueSequence = CueSequence()
+
     
     var body: some View {
         VStack {
@@ -21,42 +18,21 @@ struct MainView: View {
                 .font(.title)
             
             Button("Avvia Cue") {
-                let cuetest = cueList[0]
-                    startCue(cuetest)
+                let cuetest = cueSequence.cueList[0]
+                startCue(cuetest)
             }
             .padding()
             
-            NavigationView {
-                List(cueList) { cue in
-                    HStack {
-                        Text(cue.name)
-                            .font(.headline)
-                            .padding(.vertical, 5)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Spacer()
-                        Text("\(cue.timeRemainingCue) sec")
-                            .font(.headline)
-                            .padding(.vertical, 5)
-                            .frame(alignment: .trailing)
-                    }
-                    .padding(4)
-                    .background(cue.isPlaying ? Color.accentColor : Color.clear)
-                    .cornerRadius(5)
-                    .onTapGesture{
-                        openCuewWindow(cue: cue)
-                    }
+            List {
+                ForEach(cueSequence.cueList) { cue in
+                    CueRow(cue: cue)
                 }
-                .navigationTitle("Lista Cue")
             }
             .cornerRadius(5)
-            .toolbar {
-                ToolbarItem(placement: .automatic) {
-                    Button(action: addCue) {
-                        Label("Aggiungi Cue", systemImage: "plus")
-                    }
-                }
-            }
             
+            
+            
+/*
             TextField("CountDown", text: $countdownString)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
@@ -88,6 +64,7 @@ struct MainView: View {
                 }
             }
             .padding()
+ */
         }
         .padding()
         .onAppear {
@@ -101,20 +78,6 @@ struct MainView: View {
         }
     }
     
-    func openCuewWindow(cue: CueModel) {
-        let newWindow = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 300, height: 200),
-            styleMask: [.titled, .closable, .resizable],
-            backing: .buffered,
-            defer: false
-        )
-        newWindow.center()
-        newWindow.setFrameAutosaveName("New Cue Window")
-        newWindow.isReleasedWhenClosed = false
-        newWindow.contentView = NSHostingView(rootView: CueView(cue: cue))
-        newWindow.makeKeyAndOrderFront(nil)
-    }
-
     func openSettingsWindow() {
         if settingsWindow == nil {
             let settingsView = SettingsView()
@@ -158,11 +121,11 @@ struct MainView: View {
     
     func addCue() {
         let newCue = CueModel(duration: 0, name: "Nuova Parte")
-        cueList.append(newCue)
+        cueSequence.cueList.append(newCue)
     }
     func startCue(_ cue: CueModel) {
-        if let index = cueList.firstIndex(where: { $0.id == cue.id }) {
-            cueList[index].start()
+        if let index = cueSequence.cueList.firstIndex(where: { $0.id == cue.id }) {
+            cueSequence.cueList[index].start()
         }
     }
 }
