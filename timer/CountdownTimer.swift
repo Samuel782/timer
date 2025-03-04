@@ -8,27 +8,28 @@
 import SwiftUI
 
 class CountdownTimer: ObservableObject {
-    @Published var remainingTime: Int
+    @Published var cue: CueModel
     
     private var countdownTimer: Timer?
     
-    init(initialTime: Int = 0) {
-        self.remainingTime = initialTime
+    init(cue: CueModel) {
+        self.cue = cue
     }
     
     func startCountdown() {
+        cue.isPlaying = true
         countdownTimer?.invalidate()
         countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            self.remainingTime -= 1
+            self.cue.timeRemainingCue -= 1
         }
     }
     
-    func setTimer(duration: Int) {
-        self.remainingTime = duration
-        startCountdown()
+    func nextCue(newCue: CueModel){
+        self.cue = newCue
     }
     
     func stopCountdown() {
+        cue.isPlaying = false
         countdownTimer?.invalidate()
         countdownTimer = nil
     }

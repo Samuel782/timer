@@ -7,28 +7,20 @@
 import SwiftUI
 
 struct CueControlsView: View {
-    @Binding var cuePosition: Int
+    @State var cuePosition: Int
     @ObservedObject var cueSequence: CueSequence
     @ObservedObject var countdownTimer: CountdownTimer
 
     func updateCue(forward: Bool) {
-        // Verifica se la posizione è valida
-        if (forward && cuePosition < cueSequence.cueList.count && cueSequence.cueList[cuePosition].name != "END") ||
-           (!forward && cuePosition > 0) {
-
-            // Ferma il cue corrente
+        var newPos: Int = cuePosition + (forward ? 1 : -1)
+        
+        if(newPos >= 0 && newPos < cueSequence.cueList.count){
             cueSequence.cueList[cuePosition].isPlaying = false
 
-            // Avanza o torna indietro nella sequenza
-            cuePosition += forward ? 1 : -1
-
-            // Verifica la nuova posizione
-            if cuePosition >= 0 && cuePosition < cueSequence.cueList.count {
-                // Attiva il nuovo cue
-                cueSequence.cueList[cuePosition].isPlaying = true
-                // Avvia il countdown per il nuovo cue
-                countdownTimer.nextCue(newCue: cueSequence.cueList[cuePosition])
-            }
+            cuePosition = newPos
+            
+            cueSequence.cueList[cuePosition].isPlaying = true
+            countdownTimer.nextCue(newCue: cueSequence.cueList[cuePosition])
         }
     }
 

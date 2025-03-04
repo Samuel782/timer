@@ -23,8 +23,9 @@ struct CueRow: View {
                 .padding(.vertical, 5)
                 .frame(alignment: .trailing)
         }
-        .padding(4)
+        .padding(10)
         .background(cue.isPlaying ? Color.accentColor : Color.clear)
+        .foregroundColor(.primary)
         .cornerRadius(5)
         .onTapGesture {
             openCuewWindow(cue: cue)

@@ -6,17 +6,17 @@
 //
 import SwiftUI
 struct CountdownView: View {
-    @ObservedObject var countdownTimer: CountdownTimer
+    @ObservedObject var cue: CueModel
     
     var body: some View {
         GeometryReader { geometry in
-            let minutes = abs(countdownTimer.remainingTime) / 60
-            let seconds = abs(countdownTimer.remainingTime) % 60
+            let minutes = abs(cue.timeRemainingCue) / 60
+            let seconds = abs(cue.timeRemainingCue) % 60
             
             let textColor: Color = {
-                if countdownTimer.remainingTime < 0 {
+                if cue.timeRemainingCue < 0 {
                     return .red
-                } else if countdownTimer.remainingTime < 30 {
+                } else if cue.timeRemainingCue < 30 {
                     return .orange
                 } else {
                     return .white
@@ -26,7 +26,7 @@ struct CountdownView: View {
             let fontSize = min(geometry.size.width, geometry.size.height) * 0.4
             
             VStack {
-                Text(countdownTimer.remainingTime > 0 ? "Tempo rimanente" : "Tempo scaduto")
+                Text(cue.timeRemainingCue > 0 ? "Tempo rimanente" : "Tempo scaduto")
                     .font(.system(size: fontSize * 0.3))
                 
                 Divider()
@@ -41,9 +41,7 @@ struct CountdownView: View {
                     .padding()
                     .multilineTextAlignment(.center)
             }
-            .onDisappear {
-                countdownTimer.stopCountdown()
-            }
+
         }
     }
 }

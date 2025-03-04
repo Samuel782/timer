@@ -5,67 +5,66 @@ struct MainView: View {
     @State private var settingsWindow: NSWindow?
     @State private var countdownString: String = ""
     
-    @StateObject private var countdownTimer = CountdownTimer()
+    @StateObject private var cueSequence = CueSequence()
+    
+    @StateObject private var countdownTimer = CountdownTimer(cue: CueModel(duration: 0, name: "UGxhY2VIb2xkZXI="))
+    
     
     let screens = NSScreen.screens
     
-    @StateObject private var cueSequence = CueSequence()
-
-    
     var body: some View {
-        VStack {
-            Text("Finestra di Controllo")
-                .font(.title)
-            
-            Button("Avvia Cue") {
-                let cuetest = cueSequence.cueList[0]
-                startCue(cuetest)
-            }
-            .padding()
-            
+        
+        HStack{
+            /*
+             Button("Avvia Cue") {
+             let cuetest = cueSequence.cueList[0]
+             startCue(cuetest)
+             }
+             .padding()
+             */
             List {
                 ForEach(cueSequence.cueList) { cue in
                     CueRow(cue: cue)
                 }
-            }
-            .cornerRadius(5)
+            }.cornerRadius(5)
             
-            
-            
-/*
-            TextField("CountDown", text: $countdownString)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
-            
-            HStack {
-                Button("Avvia Timer") {
-                    let val: Int = Int(countdownString) ?? 0
-                    countdownTimer.setTimer(duration: val)
-                }
-                .padding()
+            Divider()
+            VStack{
+                CountdownView(cue: countdownTimer.cue)
                 
-                Button("Pausa Timer") {
-                    countdownTimer.stopCountdown()
-                }
-                .padding()
-                
-                Button("Reset Timer") {
-                    countdownTimer.setTimer(duration: 0)
-                    countdownTimer.stopCountdown()
-                }
-                .padding()
+                CueControlsView(cuePosition: 0, cueSequence: cueSequence, countdownTimer: countdownTimer)
             }
             
-            CountdownView(countdownTimer: countdownTimer)
-            
-            Button("Apri Schermo Intero") {
-                if let selectedScreen = getSelectedScreen() {
-                    openFullScreenWindow(on: selectedScreen)
-                }
-            }
-            .padding()
- */
         }
+        /*
+         TextField("CountDown", text: $countdownString)
+         .textFieldStyle(RoundedBorderTextFieldStyle())
+         .padding()
+         
+         HStack {
+         
+         
+         Button("Pausa Timer") {
+         countdownTimer.stopCountdown()
+         }
+         .padding()
+         
+         Button("Reset Timer") {
+         countdownTimer.setTimer(duration: 0)
+         countdownTimer.stopCountdown()
+         }
+         .padding()
+         }
+         
+         CountdownView(countdownTimer: countdownTimer)
+         
+         Button("Apri Schermo Intero") {
+         if let selectedScreen = getSelectedScreen() {
+         openFullScreenWindow(on: selectedScreen)
+         }
+         }
+         .padding()
+         */
         .padding()
         .onAppear {
             selectedScreenIndex = UserDefaults.standard.integer(forKey: "selectedScreen")
@@ -113,7 +112,7 @@ struct MainView: View {
             defer: false
         )
         fullScreenWindow.isReleasedWhenClosed = false
-        fullScreenWindow.contentView = NSHostingView(rootView: FullScreenView(countdownView: CountdownView(countdownTimer: countdownTimer)))
+        fullScreenWindow.contentView = NSHostingView(rootView: FullScreenView(countdownView: CountdownView(cue: countdownTimer.cue)))
         fullScreenWindow.level = .mainMenu + 1
         fullScreenWindow.makeKeyAndOrderFront(nil)
         fullScreenWindow.toggleFullScreen(nil)
