@@ -8,20 +8,24 @@
 import SwiftUI
 
 class CountdownTimer: ObservableObject {
-    @Published var cue: CueModel
+    @Published var cue: CueModel?
     
     private var countdownTimer: Timer?
     
-    init(cue: CueModel) {
-        self.cue = cue
+    init() {
+        
     }
-    
+
     func startCountdown() {
-        cue.isPlaying = true
+        cue?.isPlaying = true
         countdownTimer?.invalidate()
         countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            self.cue.timeRemainingCue -= 1
+            self.cue?.timeRemainingCue -= 1
         }
+    }
+    
+    func getPlayingCueName() -> String{
+        return cue?.name ?? ""
     }
     
     func nextCue(newCue: CueModel){
@@ -29,8 +33,10 @@ class CountdownTimer: ObservableObject {
     }
     
     func stopCountdown() {
-        cue.isPlaying = false
+        cue?.isPlaying = false
         countdownTimer?.invalidate()
         countdownTimer = nil
     }
+    
+    
 }

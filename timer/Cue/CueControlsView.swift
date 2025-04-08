@@ -7,18 +7,18 @@
 import SwiftUI
 
 struct CueControlsView: View {
-    @State var cuePosition: Int
+    @State var cuePosition: Int = 0
     @ObservedObject var cueSequence: CueSequence
     @ObservedObject var countdownTimer: CountdownTimer
 
     func updateCue(forward: Bool) {
         var newPos: Int = cuePosition + (forward ? 1 : -1)
-        
-        if(newPos >= 0 && newPos < cueSequence.cueList.count){
+
+        if newPos >= 0 && newPos < cueSequence.cueList.count {
             cueSequence.cueList[cuePosition].isPlaying = false
 
             cuePosition = newPos
-            
+
             cueSequence.cueList[cuePosition].isPlaying = true
             countdownTimer.nextCue(newCue: cueSequence.cueList[cuePosition])
         }
@@ -46,10 +46,7 @@ struct CueControlsView: View {
 
             // Bottone play
             Button {
-                // Non riprodurre il placeholder
-                if countdownTimer.cue.name != "UGxhY2VIb2xkZXI=" && countdownTimer.cue.timeRemainingCue != 0 {
-                    countdownTimer.startCountdown()
-                }
+                countdownTimer.startCountdown()
             } label: {
                 Image(systemName: "play.fill")
                     .resizable()

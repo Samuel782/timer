@@ -19,7 +19,7 @@ struct CountdownView: View {
                 } else if cue.timeRemainingCue < 30 {
                     return .orange
                 } else {
-                    return .white
+                    return Color.primary
                 }
             }()
             
